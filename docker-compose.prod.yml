@@ -1,11 +1,11 @@
+version: '3.9'
+
 services:
 
   mongo:
     image: mongo:7
     container_name: placeiq_mongo
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
+    restart: always
     volumes:
       - mongo-data:/data/db
     networks:
@@ -20,23 +20,18 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     container_name: placeiq_backend
-    restart: unless-stopped
-    ports:
-      - "5000:5000"
+    restart: always
     env_file:
-      - ./backend/.env
+      - ./backend/.env.prod
     depends_on:
       mongo:
         condition: service_healthy
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
     networks:
       - placeiq-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -45,23 +40,16 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     container_name: placeiq_frontend
-    restart: unless-stopped
-    ports:
-      - "5173:5173"
-    env_file:
-      - ./frontend/.env
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+    restart: always
     networks:
       - placeiq-net
 
   nginx:
     image: nginx:alpine
     container_name: placeiq_nginx
-    restart: unless-stopped
+    restart: always
     ports:
       - "80:80"
     volumes:

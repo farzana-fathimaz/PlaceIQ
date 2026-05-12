@@ -2,59 +2,58 @@ require('express-async-errors')
 const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
-const morgan = require('morgan')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
-const rateLimit = require('express-rate-limit')
+
+const corsOptions = require('./config/corsOptions')
+const { defaultLimiter } = require('./middleware/rateLimiter')
+const requestLogger = require('./middleware/requestLogger')
+const errorHandler = require('./middleware/errorHandler')
+const notFound = require('./middleware/notFound')
+const apiRoutes = require('./routes/index')
 
 const app = express()
 
+// Security headers
 app.use(helmet())
 
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  credentials: true
-}))
+// CORS
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions))
 
+// Compression
 app.use(compression())
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(cookieParser())
-app.use(morgan('dev'))
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: { message: 'Too many requests, please try again later.' }
-})
-app.use('/api', limiter)
+// Body parsers
+app.use(express.json({ limit: '10mb' }))
+app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    project: 'PlaceIQ',
-    timestamp: new Date().toISOString()
-  })
-})
+// Cookie parser
+app.use(cookieParser(process.env.COOKIE_SECRET))
 
-// Placeholder — routes will be added in Step 4
+// Request logging
+app.use(requestLogger)
+
+// Rate limiting on all API routes
+app.use('/api', defaultLimiter)
+
+// API routes — all versioned under /api/v1
+app.use('/api/v1', apiRoutes)
+
+// Root route
 app.get('/', (req, res) => {
-  res.json({ message: 'PlaceIQ API is running' })
-})
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ message: `Route ${req.originalUrl} not found` })
-})
-
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(err.statusCode || 500).json({
-    message: err.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  res.json({
+    success: true,
+    message: 'PlaceIQ API',
+    version: '1.0.0',
+    docs: '/api/v1/health',
   })
 })
+
+// 404 handler — must be after all routes
+app.use(notFound)
+
+// Global error handler — must be last
+app.use(errorHandler)
 
 module.exports = app

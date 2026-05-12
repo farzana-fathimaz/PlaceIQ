@@ -38,3 +38,5 @@ coverage/
 backend/src/uploads/*
 !backend/src/uploads/.gitkeep
 
+logs/
+backend/logs/
