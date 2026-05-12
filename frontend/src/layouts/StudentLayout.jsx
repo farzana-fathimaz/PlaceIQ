@@ -1,0 +1,87 @@
+import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../store/authStore'
+import { useUiStore } from '../store/uiStore'
+import { logoutApi } from '../api/auth.api'
+import { getInitials } from '../utils/helpers'
+
+const navItems = [
+  { path: '/student/dashboard',     label: 'Dashboard',     icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+  { path: '/student/profile',       label: 'My Profile',    icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+  { path: '/student/drives',        label: 'Drives',        icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+  { path: '/student/applications',  label: 'Applications',  icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
+  { path: '/student/notifications', label: 'Notifications', icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' },
+]
+
+const StudentLayout = () => {
+  const { user, logout } = useAuthStore()
+  const { showSuccess } = useUiStore()
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    try {
+      await logoutApi()
+    } catch (_) {}
+    logout()
+    showSuccess('Logged out successfully')
+    navigate('/login')
+  }
+
+  return (
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <aside className="w-60 bg-white border-r border-gray-200 flex flex-col shrink-0">
+        <div className="px-5 py-4 border-b border-gray-200">
+          <h1 className="text-xl font-bold text-blue-700">PlaceIQ</h1>
+          <p className="text-xs text-gray-400 mt-0.5">Student Portal</p>
+        </div>
+
+        <nav className="flex-1 py-3 overflow-y-auto">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-sm transition-colors ${
+                  isActive
+                    ? 'bg-blue-50 text-blue-700 font-medium'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`
+              }
+            >
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+              </svg>
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="px-4 py-3 border-t border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white text-xs font-semibold">
+              {getInitials(user?.name)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-800 truncate">{user?.name}</p>
+              <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="text-gray-400 hover:text-red-500 transition-colors"
+              title="Logout"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <main className="flex-1 overflow-y-auto">
+        <Outlet />
+      </main>
+    </div>
+  )
+}
+
+export default StudentLayout
