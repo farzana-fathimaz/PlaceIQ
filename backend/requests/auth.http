@@ -1,0 +1,53 @@
+@baseUrl = http://localhost:5000/api/v1
+
+### Register Officer (run this first)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Admin Officer",
+  "email": "officer@placeiq.com",
+  "password": "password123",
+  "role": "officer"
+}
+
+###
+
+### Register Student
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test Student",
+  "email": "student@placeiq.com",
+  "password": "password123",
+  "role": "student"
+}
+
+###
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "officer@placeiq.com",
+  "password": "password123"
+}
+
+###
+
+### Get Me (paste your access token below)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMDQ4MTgyOTQyZGM4MzIwZTUzODc5OCIsInJvbGUiOiJvZmZpY2VyIiwiaWF0IjoxNzc4NjgwMTk1LCJleHAiOjE3Nzg2ODEwOTV9.ftjIEoaZZIJOgMHpEW4e4kd-tZllFZGB5nC5KHwEOGs
+
+###
+
+### Refresh Token
+POST {{baseUrl}}/auth/refresh
+
+###
+
+### Logout (paste your access token)
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMDQ4MTgyOTQyZGM4MzIwZTUzODc5OCIsInJvbGUiOiJvZmZpY2VyIiwiaWF0IjoxNzc4NjgwMTk1LCJleHAiOjE3Nzg2ODEwOTV9.ftjIEoaZZIJOgMHpEW4e4kd-tZllFZGB5nC5KHwEOGs

@@ -1,16 +1,21 @@
 import { useEffect } from 'react'
 import { useAuthStore } from '../store/authStore'
-import { getMeApi } from '../api/auth.api'
+import { getMeApi, refreshApi } from '../api/auth.api'
 
-export const useAuth = () => {
-  const { login, logout, setLoading, isAuthenticated, user, isLoading } = useAuthStore()
+export const useInitializeAuth = () => {
+  const { login, logout, setLoading, setAccessToken } = useAuthStore()
 
   useEffect(() => {
     const initAuth = async () => {
-      setLoading(true)
       try {
-        const res = await getMeApi()
-        login(res.data.data.user, res.data.data.accessToken)
+        const refreshRes = await refreshApi()
+        const newToken = refreshRes.data.data.accessToken
+        setAccessToken(newToken)
+
+        const meRes = await getMeApi()
+        const fetchedUser = meRes.data.data.user
+
+        login(fetchedUser, newToken)
       } catch (_) {
         logout()
       } finally {
@@ -18,12 +23,10 @@ export const useAuth = () => {
       }
     }
 
-    if (!isAuthenticated) {
-      initAuth()
-    } else {
-      setLoading(false)
-    }
+    initAuth()
   }, [])
+}
 
-  return { user, isAuthenticated, isLoading }
+export const useAuth = () => {
+  return useAuthStore()
 }

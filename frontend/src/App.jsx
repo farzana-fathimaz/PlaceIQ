@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useAuth } from './hooks/useAuth'
+import { useAuth, useInitializeAuth } from './hooks/useAuth'
 import { PageSpinner } from './components/ui/Spinner'
 import Toast from './components/common/Toast'
 
@@ -12,6 +12,7 @@ import PublicRoute from './routes/PublicRoute'
 import LoginPage from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
 import NotFoundPage from './pages/NotFoundPage'
+import GoogleSuccessPage from './pages/auth/GoogleSuccessPage'
 
 import DashboardPage from './pages/officer/DashboardPage'
 import StudentsPage from './pages/officer/StudentsPage'
@@ -27,7 +28,9 @@ import StudentApplicationsPage from './pages/student/StudentApplicationsPage'
 import StudentNotificationsPage from './pages/student/StudentNotificationsPage'
 
 const AppRoutes = () => {
-  const { isLoading } = useAuth()
+  useInitializeAuth()
+
+const { isLoading } = useAuth()
 
   if (isLoading) return <PageSpinner />
 
@@ -38,13 +41,29 @@ const AppRoutes = () => {
 
       {/* Auth routes */}
       <Route element={<AuthLayout />}>
-        <Route path="/login" element={
-          <PublicRoute><LoginPage /></PublicRoute>
-        } />
-        <Route path="/register" element={
-          <PublicRoute><RegisterPage /></PublicRoute>
-        } />
-      </Route>
+  <Route
+    path="/login"
+    element={
+      <PublicRoute>
+        <LoginPage />
+      </PublicRoute>
+    }
+  />
+
+  <Route
+    path="/register"
+    element={
+      <PublicRoute>
+        <RegisterPage />
+      </PublicRoute>
+    }
+  />
+
+  <Route
+    path="/auth/google/success"
+    element={<GoogleSuccessPage />}
+  />
+</Route>
 
       {/* Officer routes */}
       <Route path="/officer" element={

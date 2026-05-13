@@ -1,4 +1,6 @@
-const Input = ({
+import { forwardRef } from 'react'
+
+const Input = forwardRef(({
   label,
   name,
   type = 'text',
@@ -7,7 +9,7 @@ const Input = ({
   className = '',
   required = false,
   ...props
-}) => {
+}, ref) => {
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
       {label && (
@@ -16,7 +18,9 @@ const Input = ({
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
+
       <input
+        ref={ref}
         id={name}
         name={name}
         type={type}
@@ -29,11 +33,16 @@ const Input = ({
         `}
         {...props}
       />
+
       {error && (
-        <p className="text-xs text-red-500 mt-0.5">{error}</p>
+        <p className="text-xs text-red-500 mt-0.5">
+          {error}
+        </p>
       )}
     </div>
   )
-}
+})
+
+Input.displayName = 'Input'
 
 export default Input
