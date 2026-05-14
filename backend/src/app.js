@@ -30,6 +30,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
 // Cookie parser
 app.use(cookieParser(process.env.COOKIE_SECRET))
+const path = require('path')
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 // Request logging
 app.use(requestLogger)

@@ -1,0 +1,69 @@
+@baseUrl = http://localhost:5000/api/v1
+@token = PASTE_OFFICER_TOKEN_HERE
+
+### Get all students
+GET {{baseUrl}}/students
+Authorization: Bearer {{token}}
+
+###
+
+### Get students with filters
+GET {{baseUrl}}/students?branch=CSE&batch=2021-2025&minCGPA=7&page=1&limit=10
+Authorization: Bearer {{token}}
+
+###
+
+### Search students
+GET {{baseUrl}}/students?search=rahul
+Authorization: Bearer {{token}}
+
+###
+
+### Create single student
+POST {{baseUrl}}/students
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Test Student",
+  "email": "test.student@college.edu",
+  "password": "Student@123",
+  "rollNumber": "CS21099",
+  "branch": "CSE",
+  "batch": "2021-2025",
+  "cgpa": 8.2,
+  "activeBacklogs": 0,
+  "totalBacklogs": 0,
+  "gender": "Male",
+  "phone": "9876543299"
+}
+
+###
+
+### Get student by ID
+GET {{baseUrl}}/students/PASTE_STUDENT_ID
+Authorization: Bearer {{token}}
+
+###
+
+### Update student
+PUT {{baseUrl}}/students/PASTE_STUDENT_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cgpa": 8.9,
+  "activeBacklogs": 0
+}
+
+###
+
+### Toggle student active/inactive
+PATCH {{baseUrl}}/students/PASTE_STUDENT_ID/toggle-active
+Authorization: Bearer {{token}}
+
+###
+
+### Get my profile (student token required)
+GET {{baseUrl}}/students/me/profile
+Authorization: Bearer PASTE_STUDENT_TOKEN_HERE

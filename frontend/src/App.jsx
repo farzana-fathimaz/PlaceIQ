@@ -20,6 +20,7 @@ import DrivesPage from './pages/officer/DrivesPage'
 import NotificationsPage from './pages/officer/NotificationsPage'
 import ReportsPage from './pages/officer/ReportsPage'
 import SettingsPage from './pages/officer/SettingsPage'
+import StudentDetailPage from './pages/officer/StudentDetailPage'
 
 import StudentDashboardPage from './pages/student/StudentDashboardPage'
 import StudentProfilePage from './pages/student/StudentProfilePage'
@@ -67,18 +68,19 @@ const { isLoading } = useAuth()
 
       {/* Officer routes */}
       <Route path="/officer" element={
-        <ProtectedRoute role="officer">
-          <OfficerLayout />
-        </ProtectedRoute>
+      <ProtectedRoute role="officer">
+      <OfficerLayout />
+      </ProtectedRoute>
       }>
         <Route index element={<Navigate to="/officer/dashboard" replace />} />
         <Route path="dashboard"     element={<DashboardPage />} />
         <Route path="students"      element={<StudentsPage />} />
+        <Route path="students/:id"  element={<StudentDetailPage />} />  {/* 👈 inside here */}
         <Route path="drives"        element={<DrivesPage />} />
         <Route path="notifications" element={<NotificationsPage />} />
         <Route path="reports"       element={<ReportsPage />} />
         <Route path="settings"      element={<SettingsPage />} />
-      </Route>
+      </Route>  
 
       {/* Student routes */}
       <Route path="/student" element={
@@ -93,6 +95,7 @@ const { isLoading } = useAuth()
         <Route path="applications"  element={<StudentApplicationsPage />} />
         <Route path="notifications" element={<StudentNotificationsPage />} />
       </Route>
+
 
       {/* 404 */}
       <Route path="*" element={<NotFoundPage />} />

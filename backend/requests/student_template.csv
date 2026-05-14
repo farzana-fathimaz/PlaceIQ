@@ -1,0 +1,4 @@
+name,email,rollNumber,branch,batch,cgpa,activeBacklogs,totalBacklogs,phone,gender,tenthPercent,twelfthPercent
+Rahul Sharma,rahul@college.edu,CS21001,CSE,2021-2025,8.5,0,0,9876543210,Male,92,88
+Priya Patel,priya@college.edu,CS21002,CSE,2021-2025,7.8,1,2,9876543211,Female,85,90
+Amit Kumar,amit@college.edu,IT21001,IT,2021-2025,9.1,0,0,9876543212,Male,95,91
