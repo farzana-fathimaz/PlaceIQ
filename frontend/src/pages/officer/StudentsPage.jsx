@@ -48,6 +48,17 @@ const StudentsPage = () => {
 
   useEffect(() => {
     fetchStudents()
+
+    // Poll for updates every 5 seconds
+    const interval = setInterval(async () => {
+      try {
+        await fetchStudents()
+      } catch {
+        // Silent fail on polling
+      }
+    }, 5000)
+
+    return () => clearInterval(interval)
   }, [])
 
   const debouncedSearch = useCallback(

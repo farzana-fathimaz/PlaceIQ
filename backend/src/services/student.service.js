@@ -150,7 +150,7 @@ const updateStudentByUserId = async (userId, updateData) => {
   const profile = await StudentProfile.findOne({ userId })
   if (!profile) throw new AppError('Profile not found', 404)
 
-  const restrictedFields = ['rollNumber', 'batch', 'placementStatus', 'placedAt', 'placedCTC', 'userId']
+  const restrictedFields = ['rollNumber', 'placementStatus', 'placedAt', 'placedCTC', 'userId']
   restrictedFields.forEach((f) => delete updateData[f])
 
   Object.assign(profile, updateData)

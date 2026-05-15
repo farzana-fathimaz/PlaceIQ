@@ -19,22 +19,52 @@ const StudentDetailPage = () => {
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({})
   const [saving, setSaving] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const fetchStudent = async () => {
+    try {
+      const res = await getStudentByIdApi(id)
+      setStudent(res.data.data.student)
+      setForm(res.data.data.student)
+    } catch {
+      showError('Student not found')
+      navigate('/officer/students')
+    }
+  }
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const res = await getStudentByIdApi(id)
-        setStudent(res.data.data.student)
-        setForm(res.data.data.student)
-      } catch {
-        showError('Student not found')
-        navigate('/officer/students')
+        await fetchStudent()
       } finally {
         setLoading(false)
       }
     }
     fetch()
+
+    // Poll for updates every 5 seconds
+    const interval = setInterval(async () => {
+      try {
+        await fetchStudent()
+      } catch {
+        // Silent fail on polling
+      }
+    }, 5000)
+
+    return () => clearInterval(interval)
   }, [id])
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    try {
+      await fetchStudent()
+      showSuccess('Data refreshed')
+    } catch {
+      showError('Failed to refresh')
+    } finally {
+      setRefreshing(false)
+    }
+  }
 
   const handleSave = async () => {
     setSaving(true)
@@ -68,6 +98,7 @@ const StudentDetailPage = () => {
           <p className="text-sm text-gray-500">{u?.email}</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="secondary" onClick={handleRefresh} loading={refreshing}>Refresh</Button>
           {editing ? (
             <>
               <Button variant="secondary" onClick={() => setEditing(false)}>Cancel</Button>

@@ -21,6 +21,9 @@ import NotificationsPage from './pages/officer/NotificationsPage'
 import ReportsPage from './pages/officer/ReportsPage'
 import SettingsPage from './pages/officer/SettingsPage'
 import StudentDetailPage from './pages/officer/StudentDetailPage'
+import DriveDetailPage        from './pages/officer/DriveDetailPage'
+import StudentDriveDetailPage from './pages/student/StudentDriveDetailPage'
+
 
 import StudentDashboardPage from './pages/student/StudentDashboardPage'
 import StudentProfilePage from './pages/student/StudentProfilePage'
@@ -80,6 +83,8 @@ const { isLoading } = useAuth()
         <Route path="notifications" element={<NotificationsPage />} />
         <Route path="reports"       element={<ReportsPage />} />
         <Route path="settings"      element={<SettingsPage />} />
+        <Route path="drives"        element={<DrivesPage />} />
+<Route path="drives/:id"    element={<DriveDetailPage />} />
       </Route>  
 
       {/* Student routes */}
@@ -94,6 +99,8 @@ const { isLoading } = useAuth()
         <Route path="drives"        element={<StudentDrivesPage />} />
         <Route path="applications"  element={<StudentApplicationsPage />} />
         <Route path="notifications" element={<StudentNotificationsPage />} />
+        <Route path="drives"        element={<StudentDrivesPage />} />
+<Route path="drives/:id"    element={<StudentDriveDetailPage />} />
       </Route>
 
 

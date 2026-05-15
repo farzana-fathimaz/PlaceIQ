@@ -13,8 +13,7 @@ router.get('/health', (req, res) => {
 
 router.use('/auth', require('./authRoutes'))
 router.use('/students',      require('./studentRoutes'))
-
-// router.use('/drives',        require('./driveRoutes'))
+router.use('/drives',        require('./driveRoutes'))
 // router.use('/applications',  require('./applicationRoutes'))
 // router.use('/rounds',        require('./roundRoutes'))
 // router.use('/notifications', require('./notificationRoutes'))

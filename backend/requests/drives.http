@@ -1,0 +1,92 @@
+@baseUrl = http://localhost:5000/api/v1
+@token   = PASTE_OFFICER_TOKEN_HERE
+
+### Get all drives
+GET {{baseUrl}}/drives
+Authorization: Bearer {{token}}
+
+###
+
+### Get drive stats
+GET {{baseUrl}}/drives/stats
+Authorization: Bearer {{token}}
+
+###
+
+### Create drive (draft)
+POST {{baseUrl}}/drives
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "SDE Intern 2025 — Google",
+  "company": "Google",
+  "type": "tech",
+  "jobRole": "Software Development Engineer",
+  "jobLocation": "Bangalore",
+  "salaryLPA": 18,
+  "description": "Google is hiring SDE interns for 2025 batch.",
+  "driveDate": "2025-08-15T09:00:00.000Z",
+  "lastApplyDate": "2025-07-30T23:59:00.000Z",
+  "eligibility": {
+    "minCGPA": 7.5,
+    "maxBacklogs": 0,
+    "allowedBranches": ["CSE", "IT", "ECE"],
+    "allowedBatches": ["2021-2025"],
+    "genderAllowed": "All",
+    "tenthMin": 75,
+    "twelfthMin": 70,
+    "allowPlaced": false
+  }
+}
+
+###
+
+### Update drive status to upcoming
+PATCH {{baseUrl}}/drives/PASTE_DRIVE_ID/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "upcoming"
+}
+
+###
+
+### Update status to active
+PATCH {{baseUrl}}/drives/PASTE_DRIVE_ID/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "active"
+}
+
+###
+
+### Get eligible students for drive
+GET {{baseUrl}}/drives/PASTE_DRIVE_ID/eligible-students
+Authorization: Bearer {{token}}
+
+###
+
+### Update drive details
+PUT {{baseUrl}}/drives/PASTE_DRIVE_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "salaryLPA": 20,
+  "description": "Updated description"
+}
+
+###
+
+### Archive drive
+PATCH {{baseUrl}}/drives/PASTE_DRIVE_ID/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "archived"
+}

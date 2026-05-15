@@ -31,13 +31,27 @@ const StudentProfilePage = () => {
       }
     }
     fetch()
+
+    // Poll for updates every 5 seconds
+    const interval = setInterval(async () => {
+      try {
+        const res = await getMyProfileApi()
+        setProfile(res.data.data.student)
+        setForm(res.data.data.student)
+        setSkillsRaw(res.data.data.student.skills?.join(', ') || '')
+      } catch {
+        // Silent fail on polling
+      }
+    }, 5000)
+
+    return () => clearInterval(interval)
   }, [])
 
   const handleSave = async () => {
     setSaving(true)
     try {
       const {
-        rollNumber, batch, placementStatus, placedAt,
+        rollNumber, placementStatus, placedAt,
         placedCTC, userId, _id, __v, createdAt, updatedAt,
         ...editable
       } = form
@@ -116,8 +130,14 @@ const StudentProfilePage = () => {
               value={form.twelfthPercent || ''}
               onChange={(e) => setForm({ ...form, twelfthPercent: parseFloat(e.target.value) })}
             />
+            <Input
+              label="Batch"
+              name="batch"
+              value={form.batch || ''}
+              onChange={(e) => setForm({ ...form, batch: e.target.value })}
+            />
           </div>
-          <div className="mt-4 grid grid-cols-3 gap-4 bg-gray-50 rounded-lg p-3">
+          <div className="mt-4 grid grid-cols-2 gap-4 bg-gray-50 rounded-lg p-3">
             <div>
               <p className="text-xs text-gray-400">Roll Number</p>
               <p className="text-sm font-semibold text-gray-700">{profile?.rollNumber}</p>
@@ -125,10 +145,6 @@ const StudentProfilePage = () => {
             <div>
               <p className="text-xs text-gray-400">Branch</p>
               <p className="text-sm font-semibold text-gray-700">{profile?.branch}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-400">Batch</p>
-              <p className="text-sm font-semibold text-gray-700">{profile?.batch}</p>
             </div>
           </div>
         </Card>
