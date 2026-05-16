@@ -1,0 +1,97 @@
+@baseUrl  = http://localhost:5000/api/v1
+@officer  = PASTE_OFFICER_TOKEN_HERE
+@student  = PASTE_STUDENT_TOKEN_HERE
+@driveId  = PASTE_DRIVE_ID_HERE
+@appId    = PASTE_APPLICATION_ID_HERE
+
+### Student applies to a drive
+POST {{baseUrl}}/applications
+Authorization: Bearer {{student}}
+Content-Type: application/json
+
+{
+  "driveId": "{{driveId}}"
+}
+
+###
+
+### Check if student already applied
+GET {{baseUrl}}/applications/check/{{driveId}}
+Authorization: Bearer {{student}}
+
+###
+
+### Get my applications (student)
+GET {{baseUrl}}/applications/me
+Authorization: Bearer {{student}}
+
+###
+
+### Officer gets all applications for a drive
+GET {{baseUrl}}/applications/drive/{{driveId}}
+Authorization: Bearer {{officer}}
+
+###
+
+### Officer gets all applications with status filter
+GET {{baseUrl}}/applications?status=applied
+Authorization: Bearer {{officer}}
+
+###
+
+### Get application stats for drive
+GET {{baseUrl}}/applications/stats?driveId={{driveId}}
+Authorization: Bearer {{officer}}
+
+###
+
+### Officer shortlists applicant
+PATCH {{baseUrl}}/applications/{{appId}}/status
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "status": "shortlisted",
+  "note": "Strong CGPA and relevant skills"
+}
+
+###
+
+### Officer moves to in_rounds
+PATCH {{baseUrl}}/applications/{{appId}}/status
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "status": "in_rounds"
+}
+
+###
+
+### Officer marks as placed
+PATCH {{baseUrl}}/applications/{{appId}}/status
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "status": "placed",
+  "note": "Selected for SDE role at 18 LPA"
+}
+
+###
+
+### Officer rejects applicant
+PATCH {{baseUrl}}/applications/{{appId}}/status
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "status": "rejected",
+  "note": "Did not clear technical round"
+}
+
+###
+
+### Student withdraws application
+PATCH {{baseUrl}}/applications/{{appId}}/withdraw
+Authorization: Bearer {{student}}

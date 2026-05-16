@@ -10,6 +10,8 @@ import Badge                from '../../components/ui/Badge'
 import DriveStatusBadge     from '../../features/drives/DriveStatusBadge'
 import EditDriveModal       from '../../features/drives/EditDriveModal'
 import { PageSpinner }      from '../../components/ui/Spinner'
+import DriveApplicationsTable from '../../features/applications/DriveApplicationsTable'
+import RoundsManager from '../../features/rounds/RoundsManager'
 
 const nextStatus = { draft: 'upcoming', upcoming: 'active', active: 'closed' }
 
@@ -23,6 +25,7 @@ const DriveDetailPage = () => {
   const [loading,   setLoading]   = useState(true)
   const [showEdit,  setShowEdit]  = useState(false)
   const [advancing, setAdvancing] = useState(false)
+  const [activeTab, setActiveTab] = useState('details')
 
   const fetchDrive = async () => {
     try {
@@ -69,6 +72,7 @@ const DriveDetailPage = () => {
 
   return (
     <div className="page-wrapper max-w-5xl">
+
       {/* Back + Header */}
       <div className="flex items-center gap-3 mb-6">
         <button onClick={() => navigate('/officer/drives')} className="text-gray-400 hover:text-gray-600">
@@ -110,114 +114,150 @@ const DriveDetailPage = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Drive Info */}
-        <Card>
-          <CardHeader title="Drive Details" />
-          <table className="w-full text-sm">
-            <tbody className="divide-y divide-gray-100">
-              {[
-                ['Type',        capitalize(drive?.type)],
-                ['Job Role',    drive?.jobRole    || '—'],
-                ['Location',    drive?.jobLocation || '—'],
-                ['Drive Date',  formatDate(drive?.driveDate)],
-                ['Apply By',    formatDate(drive?.lastApplyDate)],
-                ['Created By',  drive?.createdBy?.name || '—'],
-              ].map(([label, val]) => (
-                <tr key={label}>
-                  <td className="py-2 text-xs text-gray-500">{label}</td>
-                  <td className="py-2 text-sm font-medium text-gray-800 text-right">{val}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {drive?.description && (
-            <p className="text-xs text-gray-500 mt-3 pt-3 border-t border-gray-100 leading-relaxed">
-              {drive.description}
-            </p>
-          )}
-        </Card>
+      {/* Tabs */}
+      <div className="flex gap-1 border-b border-gray-200 mb-4">
+        {[
+          { key: 'details',      label: 'Drive Details' },
+          { key: 'applications', label: `Applications (${drive?.totalApplicants ?? 0})` },
+          { key: 'rounds',       label: 'Rounds'           },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === tab.key
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-        {/* Eligibility */}
-        <Card>
-          <CardHeader title="Eligibility Criteria" />
-          <table className="w-full text-sm">
-            <tbody className="divide-y divide-gray-100">
-              {[
-                ['Min CGPA',        e?.minCGPA ?? 0],
-                ['Max Backlogs',    e?.maxBacklogs ?? 0],
-                ['Gender',          e?.genderAllowed || 'All'],
-                ['Min 10th %',      e?.tenthMin || '—'],
-                ['Min 12th %',      e?.twelfthMin || '—'],
-                ['Allow Placed',    e?.allowPlaced ? 'Yes' : 'No'],
-                ['Batches',         e?.allowedBatches?.join(', ') || 'All'],
-              ].map(([label, val]) => (
-                <tr key={label}>
-                  <td className="py-2 text-xs text-gray-500">{label}</td>
-                  <td className="py-2 text-sm font-medium text-gray-800 text-right">{val}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <p className="text-xs text-gray-500 mb-2">Allowed Branches</p>
-            <div className="flex flex-wrap gap-1">
-              {(e?.allowedBranches || []).map((b) => (
-                <Badge key={b} variant="blue">{b}</Badge>
-              ))}
-              {(!e?.allowedBranches || e.allowedBranches.length === 0) && (
-                <span className="text-xs text-gray-400">All branches</span>
-              )}
-            </div>
-          </div>
-        </Card>
+      {/* Details Tab */}
+      {activeTab === 'details' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        {/* Eligible Students Preview */}
-        {eligible && (
-          <Card className="md:col-span-2">
-            <CardHeader
-              title={`Eligible Students (${eligible.count})`}
-              subtitle="Based on current eligibility criteria"
-            />
-            {eligible.students?.length === 0 ? (
-              <p className="text-sm text-gray-400">No eligible students found with current criteria.</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-2 text-xs text-gray-400 font-medium">Name</th>
-                      <th className="text-left py-2 text-xs text-gray-400 font-medium">Roll No</th>
-                      <th className="text-left py-2 text-xs text-gray-400 font-medium">Branch</th>
-                      <th className="text-left py-2 text-xs text-gray-400 font-medium">CGPA</th>
-                      <th className="text-left py-2 text-xs text-gray-400 font-medium">Backlogs</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {eligible.students.slice(0, 10).map((s) => (
-                      <tr key={s._id} className="hover:bg-gray-50">
-                        <td className="py-2">
-                          <p className="font-medium text-gray-800">{s.userId?.name}</p>
-                          <p className="text-xs text-gray-400">{s.userId?.email}</p>
-                        </td>
-                        <td className="py-2 text-xs font-mono text-gray-600">{s.rollNumber}</td>
-                        <td className="py-2"><Badge variant="blue">{s.branch}</Badge></td>
-                        <td className="py-2 font-semibold text-green-600">{s.cgpa}</td>
-                        <td className="py-2 text-gray-500">{s.activeBacklogs}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {eligible.count > 10 && (
-                  <p className="text-xs text-gray-400 mt-2">
-                    Showing 10 of {eligible.count} eligible students
-                  </p>
-                )}
-              </div>
+          {/* Drive Info */}
+          <Card>
+            <CardHeader title="Drive Details" />
+            <table className="w-full text-sm">
+              <tbody className="divide-y divide-gray-100">
+                {[
+                  ['Type',        capitalize(drive?.type)],
+                  ['Job Role',    drive?.jobRole    || '—'],
+                  ['Location',    drive?.jobLocation || '—'],
+                  ['Drive Date',  formatDate(drive?.driveDate)],
+                  ['Apply By',    formatDate(drive?.lastApplyDate)],
+                  ['Created By',  drive?.createdBy?.name || '—'],
+                ].map(([label, val]) => (
+                  <tr key={label}>
+                    <td className="py-2 text-xs text-gray-500">{label}</td>
+                    <td className="py-2 text-sm font-medium text-gray-800 text-right">{val}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {drive?.description && (
+              <p className="text-xs text-gray-500 mt-3 pt-3 border-t border-gray-100 leading-relaxed">
+                {drive.description}
+              </p>
             )}
           </Card>
-        )}
-      </div>
+
+          {/* Eligibility */}
+          <Card>
+            <CardHeader title="Eligibility Criteria" />
+            <table className="w-full text-sm">
+              <tbody className="divide-y divide-gray-100">
+                {[
+                  ['Min CGPA',        e?.minCGPA ?? 0],
+                  ['Max Backlogs',    e?.maxBacklogs ?? 0],
+                  ['Gender',          e?.genderAllowed || 'All'],
+                  ['Min 10th %',      e?.tenthMin || '—'],
+                  ['Min 12th %',      e?.twelfthMin || '—'],
+                  ['Allow Placed',    e?.allowPlaced ? 'Yes' : 'No'],
+                  ['Batches',         e?.allowedBatches?.join(', ') || 'All'],
+                ].map(([label, val]) => (
+                  <tr key={label}>
+                    <td className="py-2 text-xs text-gray-500">{label}</td>
+                    <td className="py-2 text-sm font-medium text-gray-800 text-right">{val}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <p className="text-xs text-gray-500 mb-2">Allowed Branches</p>
+              <div className="flex flex-wrap gap-1">
+                {(e?.allowedBranches || []).map((b) => (
+                  <Badge key={b} variant="blue">{b}</Badge>
+                ))}
+                {(!e?.allowedBranches || e.allowedBranches.length === 0) && (
+                  <span className="text-xs text-gray-400">All branches</span>
+                )}
+              </div>
+            </div>
+          </Card>
+
+          {/* Eligible Students Preview */}
+          {eligible && (
+            <Card className="md:col-span-2">
+              <CardHeader
+                title={`Eligible Students (${eligible.count})`}
+                subtitle="Based on current eligibility criteria"
+              />
+              {eligible.students?.length === 0 ? (
+                <p className="text-sm text-gray-400">No eligible students found with current criteria.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-2 text-xs text-gray-400 font-medium">Name</th>
+                        <th className="text-left py-2 text-xs text-gray-400 font-medium">Roll No</th>
+                        <th className="text-left py-2 text-xs text-gray-400 font-medium">Branch</th>
+                        <th className="text-left py-2 text-xs text-gray-400 font-medium">CGPA</th>
+                        <th className="text-left py-2 text-xs text-gray-400 font-medium">Backlogs</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {eligible.students.slice(0, 10).map((s) => (
+                        <tr key={s._id} className="hover:bg-gray-50">
+                          <td className="py-2">
+                            <p className="font-medium text-gray-800">{s.userId?.name}</p>
+                            <p className="text-xs text-gray-400">{s.userId?.email}</p>
+                          </td>
+                          <td className="py-2 text-xs font-mono text-gray-600">{s.rollNumber}</td>
+                          <td className="py-2"><Badge variant="blue">{s.branch}</Badge></td>
+                          <td className="py-2 font-semibold text-green-600">{s.cgpa}</td>
+                          <td className="py-2 text-gray-500">{s.activeBacklogs}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {eligible.count > 10 && (
+                    <p className="text-xs text-gray-400 mt-2">
+                      Showing 10 of {eligible.count} eligible students
+                    </p>
+                  )}
+                </div>
+              )}
+            </Card>
+          )}
+
+        </div>
+      )}
+
+      {/* Applications Tab */}
+      {activeTab === 'applications' && (
+        <DriveApplicationsTable driveId={id} />
+      )}
+      
+      {/* Rounds Tab */}
+      {activeTab === 'rounds' && (
+        <RoundsManager driveId={id} />
+      )}
 
       <EditDriveModal
         isOpen={showEdit}
@@ -225,6 +265,7 @@ const DriveDetailPage = () => {
         drive={drive}
         onSuccess={fetchDrive}
       />
+
     </div>
   )
 }

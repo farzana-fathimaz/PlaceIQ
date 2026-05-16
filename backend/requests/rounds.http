@@ -1,0 +1,109 @@
+@baseUrl  = http://localhost:5000/api/v1
+@officer  = PASTE_OFFICER_TOKEN_HERE
+@student  = PASTE_STUDENT_TOKEN_HERE
+@driveId  = PASTE_DRIVE_ID_HERE
+@roundId  = PASTE_ROUND_ID_HERE
+@appId    = PASTE_APPLICATION_ID_HERE
+
+### Create round 1 — Aptitude Test
+POST {{baseUrl}}/rounds
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "driveId": "{{driveId}}",
+  "name": "Aptitude Test",
+  "type": "aptitude",
+  "scheduledAt": "2025-08-16T09:00:00.000Z",
+  "venue": "Examination Hall A",
+  "mode": "offline",
+  "duration": "1 hour 30 minutes",
+  "instructions": "Bring college ID. No phones allowed."
+}
+
+###
+
+### Create round 2 — Technical Interview
+POST {{baseUrl}}/rounds
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "driveId": "{{driveId}}",
+  "name": "Technical Interview",
+  "type": "technical",
+  "scheduledAt": "2025-08-17T10:00:00.000Z",
+  "venue": "Seminar Hall B",
+  "mode": "offline",
+  "duration": "45 minutes per candidate",
+  "instructions": "Prepare DSA and system design topics."
+}
+
+###
+
+### Get all rounds for drive
+GET {{baseUrl}}/rounds/drive/{{driveId}}
+Authorization: Bearer {{officer}}
+
+###
+
+### Get round summary
+GET {{baseUrl}}/rounds/drive/{{driveId}}/summary
+Authorization: Bearer {{officer}}
+
+###
+
+### Get single round
+GET {{baseUrl}}/rounds/{{roundId}}
+Authorization: Bearer {{officer}}
+
+###
+
+### Move round to ongoing
+PATCH {{baseUrl}}/rounds/{{roundId}}/status
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "status": "ongoing"
+}
+
+###
+
+### Mark results for students
+PATCH {{baseUrl}}/rounds/{{roundId}}/results
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "results": [
+    {
+      "applicationId": "{{appId}}",
+      "result": "pass",
+      "remarks": "Excellent performance"
+    }
+  ]
+}
+
+###
+
+### Mark round as completed
+PATCH {{baseUrl}}/rounds/{{roundId}}/status
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "status": "completed"
+}
+
+###
+
+### Student gets their round status for a drive
+GET {{baseUrl}}/rounds/my-status/{{driveId}}
+Authorization: Bearer {{student}}
+
+###
+
+### Delete scheduled round
+DELETE {{baseUrl}}/rounds/{{roundId}}
+Authorization: Bearer {{officer}}
