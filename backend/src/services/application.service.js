@@ -203,6 +203,12 @@ const updateApplicationStatus = async (applicationId, newStatus, officerId, note
   })
 
   await application.save()
+  
+  // Trigger notification for status change
+  const notificationService = require('./notification.service')
+  setImmediate(() =>
+    notificationService.notifyApplicationStatusChange(application, newStatus, note)
+  )
 
   // If placed — update student placement status and drive placed count
   if (newStatus === 'placed') {

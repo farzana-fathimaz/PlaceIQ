@@ -93,6 +93,12 @@ const updateDrive = async (driveId, data) => {
 
   Object.assign(drive, data)
   await drive.save()
+  
+  // Trigger notifications when drive goes active
+  if (newStatus === 'active') {
+    const notificationService = require('./notification.service')
+    setImmediate(() => notificationService.notifyDriveOpen(drive))
+  }
 
   return drive
 }

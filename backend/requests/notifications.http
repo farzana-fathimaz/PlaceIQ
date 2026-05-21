@@ -1,0 +1,89 @@
+@baseUrl = http://localhost:5000/api/v1
+@officer = PASTE_OFFICER_TOKEN_HERE
+@student = PASTE_STUDENT_TOKEN_HERE
+
+### Get my notifications (student)
+GET {{baseUrl}}/notifications
+Authorization: Bearer {{student}}
+
+###
+
+### Get unread count
+GET {{baseUrl}}/notifications/unread-count
+Authorization: Bearer {{student}}
+
+###
+
+### Get only unread
+GET {{baseUrl}}/notifications?unread=true
+Authorization: Bearer {{student}}
+
+###
+
+### Mark one as read
+PATCH {{baseUrl}}/notifications/PASTE_NOTIF_ID/read
+Authorization: Bearer {{student}}
+
+###
+
+### Mark all as read
+PATCH {{baseUrl}}/notifications/read-all
+Authorization: Bearer {{student}}
+
+###
+
+### Delete one notification
+DELETE {{baseUrl}}/notifications/PASTE_NOTIF_ID
+Authorization: Bearer {{student}}
+
+###
+
+### Clear all read notifications
+DELETE {{baseUrl}}/notifications/clear-read
+Authorization: Bearer {{student}}
+
+###
+
+### Officer sends to all students
+POST {{baseUrl}}/notifications/send
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "targetGroup": "all_students",
+  "title": "Placement Orientation",
+  "message": "All final year students are required to attend the placement orientation on 15th August 2025 at 10 AM in the Main Auditorium.",
+  "type": "general",
+  "sendEmail": true
+}
+
+###
+
+### Officer sends to drive applicants
+POST {{baseUrl}}/notifications/send
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "targetGroup": "drive_applicants",
+  "relatedDriveId": "PASTE_DRIVE_ID",
+  "title": "Google Drive Update",
+  "message": "Results for the aptitude test have been published. Please check your application status.",
+  "type": "result_published",
+  "sendEmail": false
+}
+
+###
+
+### Officer sends to placed students
+POST {{baseUrl}}/notifications/send
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "targetGroup": "placed_students",
+  "title": "Offer Letter Collection",
+  "message": "Placed students are requested to collect their offer letters from the placement office by Friday.",
+  "type": "general",
+  "sendEmail": true
+}
