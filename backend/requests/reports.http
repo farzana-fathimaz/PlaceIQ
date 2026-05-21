@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:5000/api/v1
+@officer = PASTE_OFFICER_TOKEN_HERE
+@driveId = PASTE_DRIVE_ID_HERE
+
+### All Students Excel
+GET {{baseUrl}}/reports/students/excel
+Authorization: Bearer {{officer}}
+
+###
+
+### Placement Summary Excel (4 sheets)
+GET {{baseUrl}}/reports/placement/excel
+Authorization: Bearer {{officer}}
+
+###
+
+### Placement Summary PDF
+GET {{baseUrl}}/reports/placement/pdf
+Authorization: Bearer {{officer}}
+
+###
+
+### NAAC Format Excel
+GET {{baseUrl}}/reports/naac/excel
+Authorization: Bearer {{officer}}
+
+###
+
+### Single Drive Excel (3 sheets)
+GET {{baseUrl}}/reports/drive/{{driveId}}/excel
+Authorization: Bearer {{officer}}
+
+###
+
+### Single Drive PDF
+GET {{baseUrl}}/reports/drive/{{driveId}}/pdf
+Authorization: Bearer {{officer}}
