@@ -502,6 +502,12 @@ const generateNAACExcel = async () => {
 // ─── PDF REPORTS ─────────────────────────────────────────────────────────────
 
 const generatePlacementSummaryPDF = async () => {
+  const Settings = require('../models/Settings')
+  const settings = await Settings.findOne()
+  const collegeName = settings?.collegeName || 'PlaceIQ'
+  const academicYear = settings?.academicYear || ''
+  const officerName  = settings?.placementOfficerName || ''
+
   const doc = new PDFDocument({ margin: 50, size: 'A4' })
   const buffers = []
 
@@ -513,13 +519,17 @@ const generatePlacementSummaryPDF = async () => {
     .fill('#2563eb')
 
   doc
-    .fillColor('#ffffff')
-    .fontSize(22)
-    .font('Helvetica-Bold')
-    .text('PlaceIQ', 50, 20)
-    .fontSize(10)
-    .font('Helvetica')
-    .text('Placement ERP — Official Report', 50, 46)
+  .fillColor('#ffffff')
+  .fontSize(16)
+  .font('Helvetica-Bold')
+  .text(collegeName, 50, 18)
+  doc
+  .fontSize(9)
+  .font('Helvetica')
+  .text(
+  `Placement Report${academicYear ? ` · ${academicYear}` : ''}`,
+  50, 38
+)
 
   doc.fillColor('#000000').moveDown()
 
@@ -735,6 +745,12 @@ const generatePlacementSummaryPDF = async () => {
 }
 
 const generateDrivePDF = async (driveId) => {
+  const Settings = require('../models/Settings')
+  const settings = await Settings.findOne()
+  const collegeName = settings?.collegeName || 'PlaceIQ'
+  const academicYear = settings?.academicYear || ''
+  const officerName  = settings?.placementOfficerName || ''
+
   const drive = await Drive.findById(driveId)
   if (!drive) throw new AppError('Drive not found', 404)
 
@@ -757,8 +773,11 @@ const generateDrivePDF = async (driveId) => {
 
   // Header
   doc.rect(0, 0, doc.page.width, 70).fill('#2563eb')
-  doc.fillColor('#ffffff').fontSize(22).font('Helvetica-Bold').text('PlaceIQ', 50, 20)
-  doc.fontSize(10).font('Helvetica').text('Drive Report', 50, 46)
+  doc.fillColor('#ffffff').fontSize(16).font('Helvetica-Bold').text(collegeName, 50, 18)
+  doc.fontSize(9).font('Helvetica').text(
+    `Placement Report${academicYear ? ` · ${academicYear}` : ''}`,
+    50, 38
+  )
   doc.fillColor('#000000').moveDown()
 
   // Drive title

@@ -1,0 +1,82 @@
+@baseUrl = http://localhost:5000/api/v1
+@officer = PASTE_OFFICER_TOKEN_HERE
+
+### Check setup status (public)
+GET {{baseUrl}}/settings/setup-status
+
+###
+
+### Get settings
+GET {{baseUrl}}/settings
+Authorization: Bearer {{officer}}
+
+###
+
+### Create settings (first time)
+POST {{baseUrl}}/settings
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "collegeName": "Shri Ram College of Engineering",
+  "collegeCode": "SRCE",
+  "address": "123 College Road",
+  "city": "Bengaluru",
+  "state": "Karnataka",
+  "contactEmail": "placement@srce.edu.in",
+  "contactPhone": "080-12345678",
+  "website": "https://srce.edu.in",
+  "academicYear": "2024-25",
+  "placementOfficerName": "Dr. Ramesh Kumar",
+  "naacGrade": "A+",
+  "branches": ["CSE", "IT", "ECE", "EEE", "MECH", "CIVIL"],
+  "batches": ["2020-2024", "2021-2025", "2022-2026"],
+  "defaultEligibility": {
+    "minCGPA": 6.5,
+    "maxBacklogs": 0,
+    "allowedBranches": ["CSE", "IT", "ECE"],
+    "genderAllowed": "All",
+    "tenthMin": 60,
+    "twelfthMin": 60,
+    "allowPlaced": false
+  }
+}
+
+###
+
+### Update settings
+PUT {{baseUrl}}/settings
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "collegeName": "Shri Ram College of Engineering",
+  "academicYear": "2025-26",
+  "contactEmail": "placements@srce.edu.in",
+  "defaultEligibility": {
+    "minCGPA": 7.0,
+    "maxBacklogs": 0,
+    "allowedBranches": ["CSE", "IT", "ECE", "EEE"],
+    "genderAllowed": "All",
+    "tenthMin": 65,
+    "twelfthMin": 65,
+    "allowPlaced": false
+  }
+}
+
+###
+
+### Add a batch
+POST {{baseUrl}}/settings/batches
+Authorization: Bearer {{officer}}
+Content-Type: application/json
+
+{
+  "batch": "2023-2027"
+}
+
+###
+
+### Remove a batch
+DELETE {{baseUrl}}/settings/batches/2020-2024
+Authorization: Bearer {{officer}}

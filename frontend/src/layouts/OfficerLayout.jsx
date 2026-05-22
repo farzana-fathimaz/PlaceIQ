@@ -3,8 +3,11 @@ import { useAuthStore } from '../store/authStore'
 import { useUiStore } from '../store/uiStore'
 import { logoutApi } from '../api/auth.api'
 import { getInitials } from '../utils/helpers'
-import { useUnreadCount }       from '../hooks/useUnreadCount'
-import NotificationBell         from '../components/common/NotificationBell'  
+import { useUnreadCount } from '../hooks/useUnreadCount'
+import NotificationBell from '../components/common/NotificationBell'  
+import { useEffect } from 'react'
+import { getSettingsApi } from '../api/settings.api'
+import { useSettingsStore } from '../store/settingsStore'
 
 const navItems = [
   { path: '/officer/dashboard',      label: 'Dashboard',      icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
@@ -17,6 +20,20 @@ const navItems = [
 
 const OfficerLayout = () => {
   useUnreadCount(30000)
+  const { settings, setSettings } = useSettingsStore()
+
+  useEffect(() => {
+    if (!settings) {
+      getSettingsApi()
+        .then((res) => {
+          if (res.data.data.settings) {
+            setSettings(res.data.data.settings, true)
+          }
+        })
+        .catch(() => {})
+    }
+  }, [settings, setSettings])
+
   const { user, logout } = useAuthStore()
   const { showSuccess } = useUiStore()
   const navigate = useNavigate()
@@ -36,9 +53,28 @@ const OfficerLayout = () => {
       <aside className="w-60 bg-white border-r border-gray-200 flex flex-col shrink-0">
         {/* Logo */}
         <div className="px-5 py-4 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-blue-700">PlaceIQ</h1>
-          <p className="text-xs text-gray-400 mt-0.5">Officer Portal</p>
-        </div>
+          <div className="flex items-center gap-2">
+            {settings?.logo ? (
+              <img
+              src={`http://localhost:5000${settings.logo}`}
+              alt="Logo"
+              className="w-7 h-7 rounded object-contain"
+              />
+            ) : (
+              <div className="w-7 h-7 rounded bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-bold">
+                P
+              </div>
+    )}
+    <h1 className="text-base font-bold text-blue-700 truncate">
+      {settings?.collegeName || 'PlaceIQ'}
+    </h1>
+  </div>
+  <p className="text-xs text-gray-400 mt-0.5">
+    {settings?.academicYear
+      ? `Officer · ${settings.academicYear}`
+      : 'Officer Portal'}
+  </p>
+</div>
 
         {/* Nav */}
         <nav className="flex-1 py-3 overflow-y-auto">

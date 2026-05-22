@@ -32,6 +32,21 @@ const resumeFilter = (req, file, cb) => {
   }
 }
 
+const imageFilter = (req, file, cb) => {
+  const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml']
+  if (allowed.includes(file.mimetype)) {
+    cb(null, true)
+  } else {
+    cb(new AppError('Only image files are allowed (JPEG, PNG, WebP, SVG)', 400), false)
+  }
+}
+
+const uploadImage = multer({
+  storage,
+  fileFilter: imageFilter,
+  limits: { fileSize: 2 * 1024 * 1024 },
+})
+
 const uploadCSV = multer({
   storage,
   fileFilter: csvFilter,
@@ -44,4 +59,4 @@ const uploadResume = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 })
 
-module.exports = { uploadCSV, uploadResume }
+module.exports = { uploadCSV, uploadResume, uploadImage }
