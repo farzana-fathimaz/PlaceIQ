@@ -1,0 +1,48 @@
+@baseUrl = http://localhost:5000/api/v1
+@officer = PASTE_OFFICER_TOKEN_HERE
+
+### Summary KPIs
+GET {{baseUrl}}/analytics/summary
+Authorization: Bearer {{officer}}
+
+###
+
+### Branch-wise
+GET {{baseUrl}}/analytics/branch-wise
+Authorization: Bearer {{officer}}
+
+###
+
+### Company-wise
+GET {{baseUrl}}/analytics/company-wise
+Authorization: Bearer {{officer}}
+
+###
+
+### Drive-wise
+GET {{baseUrl}}/analytics/drive-wise
+Authorization: Bearer {{officer}}
+
+###
+
+### Monthly trend (12 months)
+GET {{baseUrl}}/analytics/monthly-trend
+Authorization: Bearer {{officer}}
+
+###
+
+### CGPA distribution
+GET {{baseUrl}}/analytics/cgpa-distribution
+Authorization: Bearer {{officer}}
+
+###
+
+### Top performers by CTC
+GET {{baseUrl}}/analytics/top-performers
+Authorization: Bearer {{officer}}
+
+###
+
+### Recent activity
+GET {{baseUrl}}/analytics/recent-activity
+Authorization: Bearer {{officer}}

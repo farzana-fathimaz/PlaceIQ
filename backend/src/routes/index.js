@@ -18,7 +18,7 @@ router.use('/applications',  require('./applicationRoutes'))
 router.use('/rounds',        require('./roundRoutes'))
 router.use('/notifications', require('./notificationRoutes'))
 router.use('/reports',       require('./reportRoutes'))
-// router.use('/analytics',     require('./analyticsRoutes'))
+router.use('/analytics',     require('./analyticsRoutes'))
 // router.use('/settings',      require('./settingsRoutes'))
 
 module.exports = router
