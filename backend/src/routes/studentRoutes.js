@@ -4,8 +4,12 @@ const studentController = require('../controllers/student.controller')
 const protect = require('../middleware/protect')
 const restrictTo = require('../middleware/restrictTo')
 const { uploadCSV, uploadResume } = require('../config/multer')
+const { getDashboard } = require('../controllers/studentDashboard.controller')
 
 router.use(protect)
+
+// Student dashboard — aggregated endpoint
+router.get('/dashboard/me', getDashboard)
 
 // Student self routes
 router.get('/me/profile',         studentController.getMyProfile)

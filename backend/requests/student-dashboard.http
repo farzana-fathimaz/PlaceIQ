@@ -1,0 +1,6 @@
+@baseUrl = http://localhost:5000/api/v1
+@student = PASTE_STUDENT_TOKEN_HERE
+
+### Get student dashboard (all data in one call)
+GET {{baseUrl}}/students/dashboard/me
+Authorization: Bearer {{student}}
