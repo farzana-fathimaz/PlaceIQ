@@ -197,7 +197,7 @@ const DriveApplicationsTable = ({ driveId }) => {
                           ))}
                           {sp?.resumeUrl && (
                             
-                              href={`http://localhost:5000${sp.resumeUrl}`}
+                              <a href={`http://localhost:5000${sp.resumeUrl}`}
                               target="_blank"
                               rel="noreferrer"
                               className="text-xs text-blue-600 hover:underline ml-1"
