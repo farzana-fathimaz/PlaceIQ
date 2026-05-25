@@ -6,7 +6,7 @@ const {
   setRefreshTokenCookie,
   clearRefreshTokenCookie,
   getRefreshTokenFromCookie,
-} = require('../utils/Cookie')
+} = require('../utils/cookie')
 
 const register = async (req, res) => {
   validateRegister(req.body)
