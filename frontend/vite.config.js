@@ -15,20 +15,7 @@ export default defineConfig({
       '/api': {
         target: 'http://backend:5000',
         changeOrigin: true,
-      },
-    },
-  },
-
-  build: {
-    chunkSizeWarningLimit: 1000,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          charts: ['recharts'],
-          table: ['@tanstack/react-table'],
-        },
-      },
-    },
-  },
+      }
+    }
+  }
 })
